@@ -1,3 +1,26 @@
 h1. mvn-repo
 
 These are the sources corresponding to the artifacts in https://github.com/ennerf/mvn-repo.
+
+h2. Deploying Artifacts
+
+* Clone the project for the sources corresponding to this repository
+
+bc. git clone https://github.com/ennerf/mvn-project.git
+
+* Add your projects or update source code of existing ones
+
+* Deploy artifacts into a local folder via @mvn-project/deploy_local.sh@ or @mvn-project\deploy_local.bat@
+
+* Clone mvn-repo
+
+bc. git clone https://github.com/ennerf/mvn-repo.git
+
+* Copy and paste mvn-project/mvn-repo/* into mvn-repo/
+
+* Push changes
+
+
+h2. Greetings
+
+Thanks to "Cemerick":http://cemerick.com/2010/08/24/hosting-maven-repos-on-github/ for some inspiration.
