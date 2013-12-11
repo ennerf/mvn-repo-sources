@@ -2,6 +2,7 @@
 
 target
 */target
+mvn-repo
 
 # Package Files #
 *.jar

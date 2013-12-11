@@ -34,11 +34,11 @@
     <!-- Artifact Distribution Management                            -->
     <!-- =========================================================== -->
     <distributionManagement>
-        <downloadUrl>https://raw.github.com/ennerf/mvn-repo/</downloadUrl>
+        <downloadUrl>https://raw.github.com/ennerf/mvn-repo/releases/</downloadUrl>
         <repository>
             <id>github.ennerf</id>
             <name>Public Github Repository - ennerf</name>
-            <url>https://raw.github.com/ennerf/mvn-repo/master</url>
+            <url>https://raw.github.com/ennerf/mvn-repo/master/releases/</url>
         </repository>
     </distributionManagement>
 
