@@ -1,3 +1,3 @@
-h1. mvn-repo Project Sources
+h1. mvn-repo
 
 These are the sources corresponding to the artifacts in https://github.com/ennerf/mvn-repo.
