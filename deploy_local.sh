@@ -1,2 +1,2 @@
 #!/bin/bash
-mvn -DaltDeploymentRepository=github.ennerf::default::file:target/mvn-repo clean deploy
+mvn -DaltDeploymentRepository=github.ennerf::default::file:mvn-repo clean deploy
