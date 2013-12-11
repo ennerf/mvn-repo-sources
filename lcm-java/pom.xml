@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <!-- =========================================================== -->
+    <!-- Project Settings                                            -->
+    <!-- =========================================================== -->
+    <groupId>com.googlecode.lcm</groupId>
+    <artifactId>lcm-java</artifactId>
+    <version>1.0.0-unofficial</version>
+
+    <name>LCM - Lightweight Communications and Marshalling</name>
+    <url>https://lcm.googlecode.com/</url>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+    <!-- =========================================================== -->
+    <!-- Link to official Source Code                                -->
+    <!-- =========================================================== -->
+    <scm>
+        <connection>scm:svn:http://lcm.googlecode.com/svn/trunk/lcm-java/</connection>
+        <tag>r722</tag>
+        <url>https://code.google.com/p/lcm/source/</url>
+    </scm>
+
+
+    <!-- =========================================================== -->
+    <!-- Artifact Distribution Management                            -->
+    <!-- =========================================================== -->
+    <distributionManagement>
+        <downloadUrl>https://raw.github.com/ennerf/mvn-repo/</downloadUrl>
+        <repository>
+            <id>github.ennerf</id>
+            <name>Public Github Repository - ennerf</name>
+            <url>https://raw.github.com/ennerf/mvn-repo/master</url>
+        </repository>
+    </distributionManagement>
+
+    <!-- =========================================================== -->
+    <!-- Build Settings                                              -->
+    <!-- =========================================================== -->
+    <build>
+        <plugins>
+            <plugin> <!-- attaches source code to deployment -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin> <!-- attaches javadoc to deployment -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
