@@ -1,24 +1,24 @@
-h1. mvn-repo
+h1. mvn-repo-sources
 
-These are the sources corresponding to the artifacts in https://github.com/ennerf/mvn-repo.
+This project contains the sources used to create the the artifacts in the maven repo at https://github.com/ennerf/mvn-repo. The sources consist of a fork of the official sources of each project and a manually created pom.xml.
 
 h2. Deploying Artifacts
 
-* Clone the project for the sources corresponding to this repository
+* Clone the sources repository
 
-bc. git clone https://github.com/ennerf/mvn-project.git
+bc. git clone https://github.com/ennerf/mvn-repo-sources.git
 
-* Add your projects or update source code of existing ones
+* Change as required
 
-* Deploy artifacts into a local folder via @mvn-project/deploy_local.sh@ or @mvn-project\deploy_local.bat@
+* Deploy artifacts into a local folder "mvn-repo" via @mvn-project/deploy_local.sh@ or @mvn-project\deploy_local.bat@
 
-* Clone mvn-repo
+* Clone mvn-repo project
 
 bc. git clone https://github.com/ennerf/mvn-repo.git
 
 * Copy and paste mvn-project/mvn-repo/* into mvn-repo/
 
-* Push changes
+* Push changes to mvn-repo
 
 
 h2. Greetings
