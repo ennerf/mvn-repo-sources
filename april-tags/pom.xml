@@ -1,0 +1,89 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <!-- =========================================================== -->
+    <!-- Project Settings                                            -->
+    <!-- =========================================================== -->
+    <groupId>edu.umich.eecs.april</groupId>
+    <artifactId>april-minimal</artifactId>
+    <version>0.91-unofficial</version>
+
+    <name>AprilTags - Visual Fiducial System </name>
+    <url>http://april.eecs.umich.edu/wiki/index.php/AprilTags</url>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+
+    <!-- =========================================================== -->
+    <!-- Link to official Source Code                                -->
+    <!-- =========================================================== -->
+    <scm>
+        <connection>scm:git://april.eecs.umich.edu/home/git/april.git</connection>
+    </scm>
+
+
+    <!-- =========================================================== -->
+    <!-- Artifact Distribution Management                            -->
+    <!-- =========================================================== -->
+    <distributionManagement>
+        <downloadUrl>https://raw.github.com/ennerf/mvn-repo/releases/</downloadUrl>
+        <repository>
+            <id>github.ennerf</id>
+            <name>Public Github Repository - ennerf</name>
+            <url>https://raw.github.com/ennerf/mvn-repo/master/releases/</url>
+        </repository>
+    </distributionManagement>
+
+	
+	<!-- =========================================================== -->
+    <!-- Artifact Distribution Management                            -->
+    <!-- =========================================================== -->
+	<dependencies>
+	 <dependency>
+            <groupId>com.googlecode.lcm</groupId>
+            <artifactId>lcm-java</artifactId>
+            <version>1.0.0-unofficial</version>
+        </dependency>
+	</dependencies>
+	
+    <!-- =========================================================== -->
+    <!-- Build Settings                                              -->
+    <!-- =========================================================== -->
+    <build>
+        <plugins>
+            <plugin> <!-- attaches source code to deployment -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin> <!-- attaches javadoc to deployment -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

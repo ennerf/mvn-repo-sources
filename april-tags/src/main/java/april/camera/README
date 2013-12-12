@@ -1,0 +1,255 @@
+############################################################
+ README - april.camera library
+############################################################
+
+Date: 21 April 2013
+
+april.camera is composed of a number of classes that support tasks
+such as:
+ * calibrating one or more cameras
+ * saving and loading calibrations
+ * resampling images to undo distortion and yield an image
+   that conforms to a simple pinhole model
+ * stereo rectification, which reorients a pair of images such
+   that the epipolar line for a pixel in one image is confined
+   to a single row in the other image (for efficient convolution, etc)
+ * single-image intrinsics estimation
+ * homography fitting
+ * fundamental matrix fitting
+ * synthetic calibration image generation
+
+########################################
+ Contents
+########################################
+
+This document contains the following sections:
+
+ 1. Camera Models
+ 2. Calibration tools
+ 3. Camera URLs 
+ 4. Camera model interface and image resampling
+ 5. Valid ranges for distortion functions
+ 6. Camera Math
+ 7. Miscellaneous tools
+
+########################################
+ 1. Camera Models
+########################################
+There are three primary camera models in the april.camera library. This may
+change, but at the time of writing, one model is sufficient for our lenses
+tested in the APRIL lab (from webcams to fisheye lenses). This model is the
+AngularPolynomialCalibration.
+
+The AngularPolynomialCalibration is reminiscent of both the standard radial
+distortion formulation and the lens model from Kannala and Brandt. In the
+Caltech model, points are projected using pinhole projection (e.g. x_px is
+proportional to X_meters / Z_meters), then distorted using a polynomial
+function of the radius after pinhole projection. The reduced version of the
+Kannala-Brandt model that we use in this work simply uses a polynomial function
+of one of the angles in spherical coordinates to map into the distorted image.
+This supports use of points behind the image plane (z < 0.0) and avoids the
+explosion of tan(theta)=X/Z as theta approaches PI/2 radians. In our tests,
+this Kannala-Brandt-like model performs as well or better than most
+radial-formulated models and seemed to yield a more reasonable extrapolation
+outside of the constrained part of the image (in the corners where no
+calibration constraints were made)
+
+For those who need to use the standard radial[-tangential] models used by
+Caltech and similar systems, look to the CaltechCalibration or the
+RadialPolynomialCalibration. Unlike the RadialPolynomialCalibration, the
+CaltechCalibration includes skew and tangential distortion. Note that the
+caltech model combines their distortion coefficients into one vector, which we
+do *not* do, for clarity. This is documented in CaltechCalibration.java.
+
+Of course, we also include a distortion-free model, DistortionFreeCalibration.
+
+CalibrationInitializers are companion classes to Calibrations
+(e.g. AngularPolynomialCalibration and AngularPolynomialInitializer). The
+initializers contain factory methods to instantiate an instance of the calibration
+from either observations (calibration images) or a list of parameters
+(e.g. for copying). Initializers are typically short classes (<100 lines)
+and exist because some calibrations may be sensitive to initialization.
+
+All models, to varying degrees, support a variable number of distortion
+parameters. Caltech models in practice use 2-3 distortion coefficients. 4 is
+recommended with the AngularPolynomialCalibration. These are specified in a
+key-value pair string that is comma-separated if multiple parameters are
+required. These parameters are class-specific, so check the *initializer* to
+see which substrings are extracted from the parameterString. For most models,
+only one parameter is necessary and the default is sufficient ("kclength=4")
+
+Our main calibration tools support model selection as a post-processing step,
+essentially allowing you to take the images you have collected and re-calibrate
+with a number of pre-specified models. The tools which support this includes a
+variable number of distortion parameters for each model. Please note that
+making a responsible model choice requires a much larger amount of data than is
+typically collected for calibration. A user can achieve a good calibration in
+10 images, but more images should be taken to make a confident decision about
+model selection due to the risk of over-fitting.
+
+########################################
+ 2. Calibration tools
+########################################
+Two main calibration tools exist, AprilCal and the MultiCameraCalibrator.
+
+AprilCal is an interactive, single-camera calibrator. The user is presented
+with suggestions based on the current camera parameters and uncertainties and
+guided to capture images near or equal to the selection. These images are
+picked to minimize the worst-case expected model error as measured in pixel
+space. Images are requested until a worst-case expected error threshold is
+met, which most users will likely leave at the 1 pixel default value. AprilCal
+includes an interactive terminal in the gui, so mouseover and hit ":<tab>" to
+see command options (e.g. for saving, opening a debug window, etc)
+
+MultiCameraCalibrator is a calibrator for multiple cameras intended for use by
+expert audiences or users who have gone through AprilCal multiple times.
+Novice users: PLEASE do not underestimate the importance of taking "good"
+calibration images. Our experiments (human studies) have shown that good images
+are critical to constrain parameters like the focal length. The human study
+results with OpenCV had focal lengths varying of a 6x greater range (roughly 10
+percent error in the focal length with OpenCV instead of a 1 percent error with
+AprilCal)
+
+MultiCameraCalibrator takes multiple camera urls in a special format and
+includes a weak mechanism to capture images from each camera. Do *not* expect
+any sort of time synchronization. If you are performing a serious calibration
+with the MultiCameraCalibrator, use a stand of some sort and ensure that the
+calibration target is stationary during each image capture. If this is not
+sufficient, you can copy and reimplement MultiCameraCalibrator with
+synchronization methods appropriate for your cameras.
+
+TagTriggerCal is a proof-of-concept which triggers image capture when the
+top-left tag on the mosaic is shown. This allows you to hold the target as
+desired, move your fingers off tag used for triggering, and capture that image.
+The range of tags is automatically determined by the IDs observed.
+
+All calibrators use the CameraCalibrator and CameraCalibrationSystem as a
+backend. The CameraCalibrationSystem is used within the CameraCalibrator and
+does not contain any nonlinear optimization -- this is purposefully kept in the
+CameraCalibrator for clarity. The CameraCalibrationSystem contains all of the
+book-keeping necessary so that you can take images where the mosaic is only
+observed by a single camera. Each camera will be optimized in a separate
+coordinate frame until they can be properly merged and jointly optimized.
+
+Calibration is performed using a printed target -- an array of AprilTags. See
+the camera calibration section of http://april.eecs.umich.edu for a PDF that
+you can have printed on foam board at a local office supply board. We strongly
+recommend printing on foam board, as it is reasonably cheap and far more
+well-made than a sheet of paper taped to "rigid" material (as is standard
+practice elsewhere)
+
+########################################
+ 3. Camera URLs 
+########################################
+april.camera uses april.jcam to interact with camera hardware. Each camera type
+implements the abstract class ImageSource. Drivers written in C are used via
+JNI bindings and the ImageSourceNative implementation of ImageSource.
+Additional drivers for your application could be added using the C image_source
+API, or conveniently in Java using ImageSourceReflect, which allows you to host
+your Java ImageSource in another tree and specify the class name for
+reflection.
+
+Examples of supported camera drivers/cameras include:
+ * v4l2     - Video4Linux version 2. This includes most webcams.
+ * dc1394   - IEEE1394 using libdc1394. We only support Format7
+ * pgusb    - A Point Grey USB driver using libusb to avoid the libdc1394
+              dependency
+ * file     - A specific file (e.g. a png)
+ * dir      - A directory of files
+ * ISLog    - ImageSourceLog format. A raw log of the byte buffer returned by
+              the camera
+ * ISLogLCM - An ISLog with image pointers (byte offsets) published over LCM at
+              time of writing and received over LCM for playback control.
+
+###############################################
+ 4. Camera model interface and image resampling
+###############################################
+
+Each camera model implements the View interface, which species methods to
+convert pixel coordinates (distorted coordinates, if appropriate for the model)
+to 3D rays. Classes conforming to the radial distortion model typically return
+rays with z==1, while the AngularPolynomialCalibration returns rays on the unit
+sphere (mag==1)
+
+Resampling images uses a *rasterizer* class, such as the BilinearRasterizer.
+This class takes a pair of models and produces an image for the output model
+using the following conversion:
+
+    pixel for output -> 3D ray -> pixel for input
+
+The NearestNeighborRasterizer simply looks up the appropriate pixel index,
+while the bilinear variant performs bilinear interpolation to reduce image
+artifacts.
+
+Images can be freely rectified or synthetically distorted using this class.
+They can also be rotated about the focal center, as is appropriate in stereo
+rectification.
+
+Rectifying images requires an implementation of the View interface that
+specifies the new camera intrinsics matrix and width/height of the new image.
+These can be created by hand (e.g. DistortionFreeCalibration), but typically
+users will use one of the following classes:
+
+ * MaxRectifiedView 
+     Contains the whole rectified image as determined by iteratively rectifying
+     the border of the distorted image to compute the appropriate bounds
+
+ * MaxInscribedRectifiedView 
+     Like the MaxRectifiedView, but uses a simple heuristic to find the largest
+     rectangle inside the rectified border. This should result in an image
+     without undefined pixels
+
+ * MaxGrownInscribedRectifiedView 
+     Like the MaxInscribedRectifiedView, except the region is computed with a
+     simple region-growing algorithm. This is necessary for stereo rectified
+     pairs where one camera was significantly rotated
+
+Both the input and output view can be passed through a ScaledView if
+appropriate for your application. If the input view is a scaled view, the input
+image must have already been scaled appropriately (the dimensions will be
+checked with assertions). ScaledViews are best for advanced users -- you
+should be careful to check your model if you are, for example, making an image
+pyramid.
+
+#########################################
+ 5. Valid ranges for distortion functions
+#########################################
+Unfortunately, polynomial approximations for distortion functions are not well
+defined over the entire input space. For applications where 3D points must be
+projected into images, a few options are available:
+
+ * Resample a distorted image to form a rectified image. Project 3D points into
+   the rectified image, which is described with a simple intrinsics matrix and
+   image boundaries, and check for successful projection using the boundaries
+
+ * Create a DistortionFunctionVerifier and query it on every projection to see
+   if the distortion function is valid for the proposed point.
+
+The first method is simple, but the rasterization may be unnecessary for your
+application. The second method is slightly more general, though it does assume
+that no tangential distortion is present (it only verifies properly for
+radial/single-angle models)
+
+########################################
+ 6. Camera Math
+########################################
+The CameraMath class includes common mathematical routines for cameras. This
+includes homography and fundamental matrix fitting, homography decomposition,
+stereo triangulation, intrinsics matrix estimation from vanishing points, and
+helper functions for projecting points into cameras.
+
+########################################
+ 7. Miscellaneous tools
+########################################
+april.camera.tools contains a few useful tools. Functional example code for
+rectifying images (useful for loading a png, rectifying it, and saving the
+result) is available here for single and stereo cameras (stereo rectification).
+A GUI which lets you display your image as a mesh on a spherical projection is
+available for wide-FOV cameras (for wide FOVs, flat projections explode in size
+and lose all sharpness in the corners of the rectified image)
+
+SyntheticTagMosaicImageGenerator is both a standalone-gui to inspect the affect
+of distortion parameters on synthetic images and a tool for creating synthetic
+images to test the calibration infrastructure. It has also been used to inspect
+the error on the tag center extraction when the input image is distorted, as is
+the case in calibration

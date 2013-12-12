@@ -9,6 +9,7 @@
     <!-- =========================================================== -->
     <modules>
         <module>lcm-java</module>
+        <module>april-tags</module>
     </modules>
 
 
