@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <!-- =========================================================== -->
+    <!-- Project Settings                                            -->
+    <!-- =========================================================== -->
+    <groupId>org.opencv</groupId>
+    <artifactId>opencv-java</artifactId>
+    <version>2.4.7-unofficial</version>
+
+    <name>OpenCV - Java</name>
+    <url>https://www.opencv.org/</url>
+
+    <!-- =========================================================== -->
+    <!-- Link to official Source Code                                -->
+    <!-- =========================================================== -->
+    <scm>
+        <url>http://opencv.org/downloads.html</url>
+    </scm>
+
+
+    <!-- =========================================================== -->
+    <!-- Artifact Distribution Management                            -->
+    <!-- =========================================================== -->
+    <distributionManagement>
+        <repository>
+            <id>github.ennerf</id>
+            <name>Public Github Repository - ennerf</name>
+            <url>https://raw.github.com/ennerf/mvn-repo/master/releases/</url>
+        </repository>
+    </distributionManagement>
+
+</project>
