@@ -8,3 +8,4 @@ mvn-repo
 *.jar
 *.war
 *.ear
+*.iml
