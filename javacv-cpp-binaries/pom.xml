@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.googlecode.javacv</groupId>
+    <artifactId>javacv-cpp-binaries</artifactId>
+    <version>0.6-unofficial</version>
+    <packaging>pom</packaging>
+    <name>JavaCV binaries for OpenCV, FFMpeg and AVUtils</name>
+
+    <build>
+        <plugins>
+            <plugin> <!-- Building an assembly jar that includes lib jars -->
+                <!-- NOTE: group org.apache.maven.plugin is assumed by default -->
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/linux-x86.xml</descriptor>
+                        <descriptor>src/main/assembly/linux-x86_64.xml</descriptor>
+                        <descriptor>src/main/assembly/windows-x86.xml</descriptor>
+                        <descriptor>src/main/assembly/windows-x86_64.xml</descriptor>
+                        <descriptor>src/main/assembly/macosx-x86_64.xml</descriptor>
+                        <descriptor>src/main/assembly/android-arm.xml</descriptor>
+                    </descriptors>
+                    <appendAssemblyId>true</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

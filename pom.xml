@@ -11,6 +11,7 @@
         <module>lcm-java</module>
         <module>april-tags</module>
         <module>opencv</module>
+        <module>javacv-cpp-binaries</module>
     </modules>
 
 
